@@ -340,6 +340,41 @@
     color: var(--na-orange);
     text-decoration: none;
   }
+
+  /* QR CODE */
+  .qr-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 24px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 16px;
+    border: 2px solid #eee;
+    width: fit-content;
+  }
+
+  .qr-wrap img, .qr-wrap canvas {
+    display: block;
+    border-radius: 4px;
+  }
+
+  /* CANCEL BUTTON */
+  .btn-cancel {
+    width: 100%;
+    background: transparent;
+    color: #999;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 14px 24px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.2s;
+  }
+
+  .btn-cancel:hover { background: #f5f5f5; }
 </style>
 </head>
 <body>
@@ -372,6 +407,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const SUPABASE_URL = 'https://hmkiifaoekucqnwuywwc.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_VPNft0Udnl4A32QKEgILGA_POn1nXYr';
@@ -379,6 +415,7 @@ const main = document.getElementById('main');
 
 const params = new URLSearchParams(window.location.search);
 const memberId = params.get('member') || params.get('id');
+const isStaffScan = params.get('redeem') === 'true';
 
 async function init() {
   if (!memberId) {
@@ -403,10 +440,11 @@ async function init() {
     const start = new Date(row.window_start);
     const end   = new Date(row.window_end); end.setHours(23,59,59,999);
 
-    if (row.redeemed)       showUsed(row);
-    else if (today < start) showEarly(row);
-    else if (today > end)   showExpired(row);
-    else                    showValid(row);
+    if (row.redeemed)            showUsed(row);
+    else if (today < start)      showEarly(row);
+    else if (today > end)        showExpired(row);
+    else if (isStaffScan)        showStaffConfirm(row);
+    else                         showValid(row);
 
   } catch(e) {
     showError('Something went wrong loading your offer. Try again or ask at reception.');
@@ -414,6 +452,8 @@ async function init() {
 }
 
 function showValid(row) {
+  const staffUrl = `${location.origin}${location.pathname}?member=${encodeURIComponent(row.contact_id)}&redeem=true`;
+
   main.innerHTML = `
     <div class="card">
       <div class="card-stripe valid"></div>
@@ -421,21 +461,70 @@ function showValid(row) {
         <div class="icon-wrap valid">☕</div>
         <div class="eyebrow valid">Happy Birthday, ${esc(row.first_name)}! 🎉</div>
         <div class="card-title">One free coffee, on us</div>
-        <p class="card-desc">Show this screen to the café team and tap the button below — your birthday coffee is on Northern Arena.</p>
+        <p class="card-desc">Show this QR code to the café team — they'll scan it to confirm your free coffee.</p>
+        <div class="qr-wrap">
+          <div id="qrcode"></div>
+        </div>
+        <div class="validity-pill">
+          <span class="validity-dot"></span>
+          Valid until ${fmtDate(row.window_end)}
+        </div>
+        <div class="divider"></div>
+        <div class="card-footer-note">One per member · Birthday week only · Staff scan to redeem</div>
+      </div>
+    </div>
+    <div class="bottom-note">Questions? Ask at reception or call <a href="tel:094219700">09 421 9700</a></div>
+  `;
+
+  new QRCode(document.getElementById('qrcode'), {
+    text: staffUrl,
+    width: 180,
+    height: 180,
+    colorDark: '#0a0f1e',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  confetti();
+}
+
+function showStaffConfirm(row) {
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe valid"></div>
+      <div class="card-body">
+        <div class="icon-wrap valid">☕</div>
+        <div class="eyebrow valid">Staff confirmation</div>
+        <div class="card-title">Free coffee for ${esc(row.first_name)}?</div>
+        <p class="card-desc">Tap confirm to redeem this member's birthday coffee. This can't be undone.</p>
         <div class="validity-pill">
           <span class="validity-dot"></span>
           Valid until ${fmtDate(row.window_end)}
         </div>
         <button class="btn-redeem" id="redeemBtn" onclick="redeem('${esc(row.contact_id)}')">
-          Claim my free coffee →
+          ✓ Confirm — give the coffee
         </button>
+        <button class="btn-cancel" onclick="window.close()">Cancel</button>
         <div class="divider"></div>
-        <div class="card-footer-note">One per member · Birthday week only · Non-transferable</div>
+        <div class="card-footer-note">Only tap confirm after handing over the coffee</div>
       </div>
     </div>
-    <div class="bottom-note">Questions? Ask at reception or call <a href="tel:094219700">09 421 9700</a></div>
   `;
-  confetti();
+}
+
+function showStaffSuccess(row) {
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe valid"></div>
+      <div class="card-body">
+        <div class="icon-wrap valid">✓</div>
+        <div class="eyebrow valid">Done!</div>
+        <div class="card-title">Coffee redeemed</div>
+        <p class="card-desc"><strong>${esc(row.first_name)}'s</strong> birthday coffee has been marked as redeemed. Enjoy! ☕</p>
+        <div class="card-footer-note">This offer is now closed for this member.</div>
+      </div>
+    </div>
+  `;
 }
 
 function showUsed(row) {
@@ -505,7 +594,7 @@ function showError(msg) {
 async function redeem(contactId) {
   const btn = document.getElementById('redeemBtn');
   btn.disabled = true;
-  btn.textContent = 'Redeeming…';
+  btn.textContent = 'Confirming…';
 
   try {
     const res = await fetch(
@@ -523,11 +612,11 @@ async function redeem(contactId) {
     );
     if (!res.ok) throw new Error('patch failed');
     const data = await res.json();
-    showUsed(data[0]);
+    showStaffSuccess(data[0]);
   } catch(e) {
     btn.disabled = false;
-    btn.textContent = 'Claim my free coffee →';
-    alert('Something went wrong. Please ask the team at reception to mark this manually.');
+    btn.textContent = '✓ Confirm — give the coffee';
+    alert('Something went wrong. Please ask reception to mark this manually.');
   }
 }
 
@@ -543,7 +632,7 @@ function confetti() {
   const canvas = document.getElementById('confetti');
   const ctx = canvas.getContext('2d');
   canvas.width = innerWidth; canvas.height = innerHeight;
-  const cols = ['#f04e23','#f5a623','#2eb87a','#3b82f6','#ec4899','#ffffff'];
+  const cols = ['#1a6fdb','#60a5fa','#2eb87a','#f5a623','#ec4899','#ffffff'];
   const bits = Array.from({length:140}, () => ({
     x: Math.random() * canvas.width,
     y: -20 - Math.random() * 100,
