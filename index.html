@@ -436,23 +436,24 @@ async function init() {
     }
 
     const row = data[0];
-    const today = new Date(); today.setHours(0,0,0,0);
-    const start = new Date(row.window_start);
-    const end   = new Date(row.window_end); end.setHours(23,59,59,999);
+    const now = new Date();
+    const created = new Date(row.created_at);
+    const expires = new Date(created);
+    expires.setDate(expires.getDate() + 10);
 
-    if (row.redeemed)            showUsed(row);
-    else if (today < start)      showEarly(row);
-    else if (today > end)        showExpired(row);
-    else if (isStaffScan)        showStaffConfirm(row);
-    else                         showValid(row);
+    if (row.redeemed)        showUsed(row);
+    else if (now > expires)  showExpired(row, expires);
+    else if (isStaffScan)    showStaffConfirm(row);
+    else                     showValid(row, expires);
 
   } catch(e) {
     showError('Something went wrong loading your offer. Try again or ask at reception.');
   }
 }
 
-function showValid(row) {
+function showValid(row, expires) {
   const staffUrl = `${location.origin}${location.pathname}?member=${encodeURIComponent(row.contact_id)}&redeem=true`;
+  const expiryStr = expires ? expires.toLocaleDateString('en-NZ', {day:'numeric', month:'long', year:'numeric'}) : '';
 
   main.innerHTML = `
     <div class="card">
@@ -467,10 +468,10 @@ function showValid(row) {
         </div>
         <div class="validity-pill">
           <span class="validity-dot"></span>
-          Valid until ${fmtDate(row.window_end)}
+          Valid until ${expiryStr}
         </div>
         <div class="divider"></div>
-        <div class="card-footer-note">One per member · Birthday week only · Staff scan to redeem</div>
+        <div class="card-footer-note">One per member · Non-transferable · Staff scan to redeem</div>
       </div>
     </div>
     <div class="bottom-note">Questions? Ask at reception or call <a href="tel:094219700">09 421 9700</a></div>
@@ -546,22 +547,8 @@ function showUsed(row) {
   `;
 }
 
-function showEarly(row) {
-  main.innerHTML = `
-    <div class="card">
-      <div class="card-stripe early"></div>
-      <div class="card-body">
-        <div class="icon-wrap early">🗓️</div>
-        <div class="eyebrow early">${esc(row.first_name)}</div>
-        <div class="card-title">Not quite time yet</div>
-        <p class="card-desc">Your birthday coffee will be ready from <strong>${fmtDate(row.window_start)}</strong>. Come back then and we'll have a coffee waiting! ☕</p>
-        <div class="card-footer-note">Valid ${fmtDate(row.window_start)} – ${fmtDate(row.window_end)}</div>
-      </div>
-    </div>
-  `;
-}
-
-function showExpired(row) {
+function showExpired(row, expires) {
+  const expiryStr = expires ? expires.toLocaleDateString('en-NZ', {day:'numeric', month:'long', year:'numeric'}) : 'recently';
   main.innerHTML = `
     <div class="card">
       <div class="card-stripe expired"></div>
@@ -569,7 +556,7 @@ function showExpired(row) {
         <div class="icon-wrap expired">⏰</div>
         <div class="eyebrow expired">${esc(row.first_name)}</div>
         <div class="card-title">Offer expired</div>
-        <p class="card-desc">This birthday coffee was valid until <strong>${fmtDate(row.window_end)}</strong>. It's expired now — but we'll have another one waiting next year! 🎂</p>
+        <p class="card-desc">This birthday coffee expired on <strong>${expiryStr}</strong>. We'll have another one waiting for you next year! 🎂</p>
         <div class="card-footer-note">Questions? Reach us at <strong>info@northernarena.co.nz</strong></div>
       </div>
     </div>
