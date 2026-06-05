@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Birthday Coffee — Northern Arena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --na-dark: #0d1117;
+    --na-navy: #141c2b;
+    --na-orange: #f04e23;
+    --na-orange-dark: #c73d18;
+    --na-gold: #f5a623;
+    --na-green: #2eb87a;
+    --na-text: #ffffff;
+    --na-muted: rgba(255,255,255,0.5);
+    --card-bg: #ffffff;
+    --card-text: #0d1117;
+    --card-muted: #666;
+  }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--na-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(240,78,35,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(46,184,122,0.08) 0%, transparent 60%);
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo-lockup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-badge {
+    width: 38px;
+    height: 38px;
+    background: var(--na-orange);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo-badge svg { width: 24px; height: 24px; }
+
+  .logo-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--na-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .header-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--na-orange);
+    background: rgba(240,78,35,0.12);
+    border: 1px solid rgba(240,78,35,0.25);
+    border-radius: 100px;
+    padding: 4px 12px;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    width: 100%;
+    max-width: 440px;
+    padding: 36px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LOADING */
+  .loading-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding: 80px 0;
+  }
+
+  .ring {
+    width: 48px;
+    height: 48px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--na-orange);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-size: 14px;
+    color: var(--na-muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* CARD */
+  .card {
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+    animation: cardIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card-stripe {
+    height: 6px;
+  }
+
+  .card-stripe.valid   { background: linear-gradient(90deg, var(--na-green), #43d68a); }
+  .card-stripe.used    { background: linear-gradient(90deg, var(--na-orange), var(--na-gold)); }
+  .card-stripe.expired { background: linear-gradient(90deg, #888, #aaa); }
+  .card-stripe.early   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .card-stripe.error   { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+  .card-body {
+    padding: 36px 32px 40px;
+    text-align: center;
+  }
+
+  .icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 38px;
+  }
+
+  .icon-wrap.valid   { background: #e8faf2; }
+  .icon-wrap.used    { background: #fff3ec; }
+  .icon-wrap.expired { background: #f5f5f5; }
+  .icon-wrap.early   { background: #eff6ff; }
+  .icon-wrap.error   { background: #fef2f2; }
+
+  .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .eyebrow.valid   { color: var(--na-green); }
+  .eyebrow.used    { color: var(--na-orange); }
+  .eyebrow.expired { color: #888; }
+  .eyebrow.early   { color: #3b82f6; }
+  .eyebrow.error   { color: #ef4444; }
+
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 32px;
+    line-height: 1.1;
+    color: var(--card-text);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .card-desc {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--card-muted);
+    margin-bottom: 28px;
+  }
+
+  .card-desc strong { color: var(--card-text); font-weight: 600; }
+
+  .validity-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f5f5f5;
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 28px;
+  }
+
+  .validity-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--na-green);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* REDEEM BUTTON */
+  .btn-redeem {
+    width: 100%;
+    background: var(--na-orange);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 20px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 8px 24px rgba(240,78,35,0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-redeem::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  }
+
+  .btn-redeem:hover:not(:disabled) {
+    background: var(--na-orange-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(240,78,35,0.45);
+  }
+
+  .btn-redeem:active:not(:disabled) { transform: translateY(0); }
+
+  .btn-redeem:disabled {
+    background: #ccc;
+    box-shadow: none;
+    cursor: default;
+  }
+
+  /* STAMP */
+  .stamp-wrap {
+    margin: 0 auto 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .stamp {
+    display: inline-block;
+    border: 3px solid var(--na-orange);
+    color: var(--na-orange);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 22px;
+    border-radius: 6px;
+    transform: rotate(-4deg);
+    opacity: 0.85;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: 24px 0;
+  }
+
+  .card-footer-note {
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* CONFETTI */
+  #confetti {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* BOTTOM */
+  .bottom-note {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--na-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .bottom-note a {
+    color: var(--na-orange);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="header">
+  <div class="logo-lockup">
+    <div class="logo-badge">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L4 7v5c0 5 3.5 9.74 8 11 4.5-1.26 8-6 8-11V7L12 2z" fill="white" opacity="0.9"/>
+        <path d="M9 12l2 2 4-4" stroke="#f04e23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">Northern Arena</div>
+      <div class="logo-sub">Silverdale</div>
+    </div>
+  </div>
+  <div class="header-tag">Birthday Offer</div>
+</div>
+
+<div class="main" id="main">
+  <div class="loading-wrap">
+    <div class="ring"></div>
+    <div class="loading-text">Loading your offer…</div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://hmkiifaoekucqnwuywwc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_VPNft0Udnl4A32QKEgILGA_POn1nXYr';
+const main = document.getElementById('main');
+
+const params = new URLSearchParams(window.location.search);
+const memberId = params.get('member') || params.get('id');
+
+async function init() {
+  if (!memberId) {
+    showError('No member ID found in this link. Please use the link from your birthday email or ask at reception.');
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/redemptions?contact_id=eq.${encodeURIComponent(memberId)}&limit=1`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    if (!data || data.length === 0) {
+      showError("We couldn't find your birthday offer. Please ask at reception and we'll sort it out.");
+      return;
+    }
+
+    const row = data[0];
+    const today = new Date(); today.setHours(0,0,0,0);
+    const start = new Date(row.window_start);
+    const end   = new Date(row.window_end); end.setHours(23,59,59,999);
+
+    if (row.redeemed)       showUsed(row);
+    else if (today < start) showEarly(row);
+    else if (today > end)   showExpired(row);
+    else                    showValid(row);
+
+  } catch(e) {
+    showError('Something went wrong loading your offer. Try again or ask at reception.');
+  }
+}
+
+function showValid(row) {
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe valid"></div>
+      <div class="card-body">
+        <div class="icon-wrap valid">☕</div>
+        <div class="eyebrow valid">Happy Birthday, ${esc(row.first_name)}! 🎉</div>
+        <div class="card-title">One free coffee, on us</div>
+        <p class="card-desc">Show this screen to the café team and tap the button below — your birthday coffee is on Northern Arena.</p>
+        <div class="validity-pill">
+          <span class="validity-dot"></span>
+          Valid until ${fmtDate(row.window_end)}
+        </div>
+        <button class="btn-redeem" id="redeemBtn" onclick="redeem('${esc(row.contact_id)}')">
+          Claim my free coffee →
+        </button>
+        <div class="divider"></div>
+        <div class="card-footer-note">One per member · Birthday week only · Non-transferable</div>
+      </div>
+    </div>
+    <div class="bottom-note">Questions? Ask at reception or call <a href="tel:094219700">09 421 9700</a></div>
+  `;
+  confetti();
+}
+
+function showUsed(row) {
+  const when = row.redeemed_at
+    ? new Date(row.redeemed_at).toLocaleDateString('en-NZ', {day:'numeric', month:'long'})
+    : 'earlier';
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe used"></div>
+      <div class="card-body">
+        <div class="icon-wrap used">✓</div>
+        <div class="eyebrow used">${esc(row.first_name)}</div>
+        <div class="stamp-wrap"><div class="stamp">Redeemed</div></div>
+        <div class="card-title">Already claimed</div>
+        <p class="card-desc">This birthday coffee was redeemed on <strong>${when}</strong>. One per member — see you next birthday! 🎂</p>
+        <div class="card-footer-note">If you think this is an error, ask at reception.</div>
+      </div>
+    </div>
+  `;
+}
+
+function showEarly(row) {
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe early"></div>
+      <div class="card-body">
+        <div class="icon-wrap early">🗓️</div>
+        <div class="eyebrow early">${esc(row.first_name)}</div>
+        <div class="card-title">Not quite time yet</div>
+        <p class="card-desc">Your birthday coffee will be ready from <strong>${fmtDate(row.window_start)}</strong>. Come back then and we'll have a coffee waiting! ☕</p>
+        <div class="card-footer-note">Valid ${fmtDate(row.window_start)} – ${fmtDate(row.window_end)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function showExpired(row) {
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe expired"></div>
+      <div class="card-body">
+        <div class="icon-wrap expired">⏰</div>
+        <div class="eyebrow expired">${esc(row.first_name)}</div>
+        <div class="card-title">Offer expired</div>
+        <p class="card-desc">This birthday coffee was valid until <strong>${fmtDate(row.window_end)}</strong>. It's expired now — but we'll have another one waiting next year! 🎂</p>
+        <div class="card-footer-note">Questions? Reach us at <strong>info@northernarena.co.nz</strong></div>
+      </div>
+    </div>
+  `;
+}
+
+function showError(msg) {
+  main.innerHTML = `
+    <div class="card">
+      <div class="card-stripe error"></div>
+      <div class="card-body">
+        <div class="icon-wrap error">!</div>
+        <div class="eyebrow error">Something went wrong</div>
+        <div class="card-title">We hit a snag</div>
+        <p class="card-desc">${msg}</p>
+        <div class="card-footer-note">📞 09 421 9700 · info@northernarena.co.nz</div>
+      </div>
+    </div>
+  `;
+}
+
+async function redeem(contactId) {
+  const btn = document.getElementById('redeemBtn');
+  btn.disabled = true;
+  btn.textContent = 'Redeeming…';
+
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/redemptions?contact_id=eq.${encodeURIComponent(contactId)}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({ redeemed: true, redeemed_at: new Date().toISOString() })
+      }
+    );
+    if (!res.ok) throw new Error('patch failed');
+    const data = await res.json();
+    showUsed(data[0]);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Claim my free coffee →';
+    alert('Something went wrong. Please ask the team at reception to mark this manually.');
+  }
+}
+
+function fmtDate(d) {
+  return new Date(d).toLocaleDateString('en-NZ', { day:'numeric', month:'long', year:'numeric' });
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function confetti() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  const cols = ['#f04e23','#f5a623','#2eb87a','#3b82f6','#ec4899','#ffffff'];
+  const bits = Array.from({length:140}, () => ({
+    x: Math.random() * canvas.width,
+    y: -20 - Math.random() * 100,
+    w: Math.random() * 11 + 5,
+    h: Math.random() * 6 + 3,
+    c: cols[Math.floor(Math.random()*cols.length)],
+    vy: Math.random() * 2.5 + 2,
+    vx: (Math.random()-0.5) * 2.5,
+    a: Math.random()*Math.PI*2,
+    va: (Math.random()-0.5)*0.15
+  }));
+  let alive = true;
+  setTimeout(()=>{ alive=false; }, 3500);
+  (function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    bits.forEach(b => {
+      b.y += b.vy; b.x += b.vx; b.a += b.va;
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.a);
+      ctx.fillStyle = b.c; ctx.fillRect(-b.w/2,-b.h/2,b.w,b.h);
+      ctx.restore();
+    });
+    if (alive || bits.some(b => b.y < canvas.height)) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  })();
+}
+
+init();
+</script>
+</body>
+</html>
