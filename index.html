@@ -174,11 +174,11 @@
     background: #0f4c75;
     color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 11px;
-    letter-spacing: 0.15em;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    padding: 3px 10px;
+    padding: 6px 16px;
     border-radius: 4px;
   }
   .staff-hint {
@@ -190,9 +190,9 @@
   .redeem-btn {
     width: 100%;
     padding: 14px;
-    background: #0f4c75;
-    color: #fff;
-    border: none;
+    background: #e5e7eb;
+    color: #9ca3af;
+    border: 1px solid #e5e7eb;
     border-radius: 10px;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 800;
@@ -201,8 +201,9 @@
     text-transform: uppercase;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
+    opacity: 0.8;
   }
-  .redeem-btn:hover { background: #1b6ca8; transform: translateY(-1px); }
+  .redeem-btn:hover { background: #d1d5db; color: #6b7280; opacity: 1; transform: translateY(-1px); }
   .redeem-btn:active { transform: translateY(0); }
   .redeem-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
 
@@ -339,7 +340,7 @@
 
     <div class="staff-section">
       <div class="staff-header">
-        <span class="staff-tag">Staff Only</span>
+        <span class="staff-tag">CAFÉ ONLY</span>
       </div>
       <p class="staff-hint">Tap below to mark this voucher as redeemed.</p>
       <button class="redeem-btn" id="redeem-btn" onclick="showConfirm()">✓ Redeem This Coffee</button>
