@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Northern Arena — Birthday Coffee</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -16,40 +16,42 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 40px;
   }
 
   /* HEADER */
   .header {
     width: 100%;
-    background: #0d1b2a;
     padding: 16px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-  .logo { height: 36px; }
+  .logo { height: 38px; }
   .badge {
-    background: #f97316;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
     color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    padding: 4px 12px;
-    border-radius: 4px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+    text-transform: uppercase;
   }
 
-  /* MAIN CARD */
+  /* CARD */
   .card {
     width: 100%;
-    max-width: 420px;
-    margin: 32px 16px 0;
+    max-width: 400px;
+    margin: 12px 16px 0;
     background: #fff;
-    border-radius: 20px;
+    border-radius: 24px;
     overflow: hidden;
     color: #0d1b2a;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.35);
   }
 
   /* CUSTOMER SECTION */
@@ -57,148 +59,177 @@
     padding: 36px 28px 28px;
     text-align: center;
   }
+
   .coffee-icon {
-    width: 72px; height: 72px;
-    background: #f0faf5;
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    margin: 0 auto 20px;
+    font-size: 40px;
+    margin: 0 auto 18px;
+    box-shadow: 0 4px 16px rgba(15,76,117,0.15);
   }
+
   .eyebrow {
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     font-size: 13px;
-    letter-spacing: 0.12em;
-    color: #16a34a;
+    letter-spacing: 0.14em;
+    color: #0f4c75;
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .eyebrow.used-label { color: #ea580c; }
-  .eyebrow.expired-label { color: #6b7280; }
-  .eyebrow.early-label { color: #2563eb; }
-  .eyebrow.error-label { color: #dc2626; }
 
   .headline {
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 32px;
-    line-height: 1.1;
+    font-weight: 900;
+    font-size: 36px;
+    line-height: 1.0;
     color: #0d1b2a;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
   }
+
   .subtext {
     font-size: 15px;
     color: #4b5563;
     line-height: 1.5;
     margin-bottom: 20px;
   }
-  .validity {
+
+  /* Days left pill */
+  .days-left {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    color: #15803d;
-    font-size: 13px;
-    font-weight: 500;
-    padding: 6px 14px;
-    border-radius: 20px;
-    margin-bottom: 4px;
+    gap: 8px;
+    background: linear-gradient(135deg, #0f4c75, #1b6ca8);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    padding: 8px 20px;
+    border-radius: 30px;
+    margin-bottom: 8px;
   }
-  .validity .dot {
-    width: 7px; height: 7px;
-    background: #16a34a;
+  .days-left .pulse {
+    width: 8px; height: 8px;
+    background: #4ade80;
     border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(74,222,128,0.6);
+    animation: pulse 2s ease-in-out infinite;
   }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
+    70%  { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+    100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+  }
+
   .fine-print {
     font-size: 11px;
     color: #9ca3af;
-    margin-top: 16px;
+    margin-top: 10px;
   }
 
-  /* DIVIDER */
-  .divider {
+  /* STAFF DIVIDER */
+  .staff-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px;
+    margin: 4px 0 0;
+  }
+  .staff-divider .line {
+    flex: 1;
     height: 1px;
-    background: #f3f4f6;
-    margin: 0;
+    background: #e5e7eb;
+  }
+  .staff-divider .label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    white-space: nowrap;
   }
 
   /* STAFF SECTION */
   .staff-section {
-    background: #f9fafb;
-    padding: 16px 28px 24px;
+    background: #f1f5f9;
+    padding: 16px 20px 20px;
+    border-top: 2px dashed #cbd5e1;
+    margin-top: 4px;
   }
-  .staff-label {
+  .staff-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .staff-tag {
+    background: #0f4c75;
+    color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    font-size: 10px;
-    letter-spacing: 0.18em;
+    font-size: 11px;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #9ca3af;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+  .staff-hint {
+    font-size: 12px;
+    color: #64748b;
     text-align: center;
     margin-bottom: 12px;
   }
   .redeem-btn {
     width: 100%;
-    padding: 12px;
-    background: #e5e7eb;
-    color: #6b7280;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
+    padding: 14px;
+    background: #0f4c75;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.06em;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
+    transition: background 0.2s, transform 0.1s;
   }
-  .redeem-btn:hover {
-    background: #d1d5db;
-    color: #374151;
-  }
-  .redeem-btn:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
+  .redeem-btn:hover { background: #1b6ca8; transform: translateY(-1px); }
+  .redeem-btn:active { transform: translateY(0); }
+  .redeem-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
 
-  /* FOOTER */
-  .footer {
-    padding: 24px 16px 40px;
-    text-align: center;
-    font-size: 13px;
-    color: rgba(255,255,255,0.45);
-  }
-  .footer a { color: #f97316; text-decoration: none; }
-
-  /* STATES — used, expired, error, loading */
+  /* STATES */
   .state-icon {
-    width: 72px; height: 72px;
+    width: 80px; height: 80px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    margin: 0 auto 20px;
+    font-size: 40px;
+    margin: 0 auto 16px;
   }
-  .state-used { background: #fff7ed; }
-  .state-expired { background: #f9fafb; }
-  .state-error { background: #fef2f2; }
-  .state-early { background: #eff6ff; }
-
   .stamp {
     display: inline-block;
     border: 3px solid #ea580c;
     color: #ea580c;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: 0.1em;
-    padding: 6px 18px;
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: 0.12em;
+    padding: 6px 20px;
     border-radius: 4px;
     transform: rotate(-8deg);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
+  .eyebrow.used-label { color: #ea580c; }
+  .eyebrow.expired-label { color: #6b7280; }
+  .eyebrow.early-label { color: #2563eb; }
+  .eyebrow.error-label { color: #dc2626; }
 
   /* Loading */
   .loading {
@@ -208,7 +239,7 @@
   .spinner {
     width: 40px; height: 40px;
     border: 3px solid #e5e7eb;
-    border-top-color: #f97316;
+    border-top-color: #0f4c75;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     margin: 0 auto 16px;
@@ -225,46 +256,56 @@
   }
   .confirm-box {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 32px 28px;
     max-width: 340px;
     width: 100%;
     text-align: center;
     color: #0d1b2a;
   }
+  .confirm-box .confirm-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
   .confirm-box h3 {
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 22px;
+    font-weight: 900;
+    font-size: 24px;
     text-transform: uppercase;
     margin-bottom: 8px;
+    color: #0f4c75;
   }
   .confirm-box p {
     font-size: 14px;
     color: #6b7280;
     margin-bottom: 24px;
+    line-height: 1.5;
   }
   .confirm-actions { display: flex; gap: 10px; }
   .confirm-actions button {
-    flex: 1; padding: 12px;
-    border-radius: 8px;
+    flex: 1; padding: 13px;
+    border-radius: 10px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 15px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     cursor: pointer;
     border: none;
+    transition: opacity 0.2s;
   }
-  .btn-cancel {
-    background: #f3f4f6;
-    color: #6b7280;
-  }
-  .btn-confirm {
-    background: #16a34a;
-    color: #fff;
-  }
+  .btn-cancel { background: #f1f5f9; color: #64748b; }
+  .btn-confirm { background: #0f4c75; color: #fff; }
   .btn-confirm:disabled { opacity: 0.6; cursor: default; }
+
+  /* Footer */
+  .footer {
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+  }
+  .footer a { color: rgba(255,255,255,0.8); }
 
   .hidden { display: none !important; }
 </style>
@@ -273,75 +314,79 @@
 
 <div class="header">
   <img class="logo" src="https://static.wixstatic.com/media/065451_13d759049fbe4b8aab5c5f7bf479aab7~mv2.png" alt="Northern Arena" onerror="this.style.display='none'">
-  <span class="badge">BIRTHDAY OFFER</span>
+  <span class="badge">🎂 Birthday Offer</span>
 </div>
 
-<!-- MAIN CARD -->
 <div class="card" id="card">
-  <!-- Loading state -->
+
+  <!-- Loading -->
   <div id="state-loading" class="loading">
     <div class="spinner"></div>
     <p style="color:#6b7280;font-size:14px;">Checking your offer…</p>
   </div>
 
-  <!-- Valid state -->
+  <!-- Valid -->
   <div id="state-valid" class="hidden">
     <div class="customer">
       <div class="coffee-icon">☕</div>
       <div class="eyebrow">Happy Birthday, <span id="first-name"></span>! 🎉</div>
       <div class="headline">One Free Coffee,<br>On Us</div>
-      <p class="subtext">Show this screen to the café team to claim your free coffee.</p>
-      <div class="validity"><span class="dot"></span> Valid until <span id="expiry-date"></span></div>
+      <p class="subtext">Show this screen at the café counter to claim your free coffee.</p>
+      <div class="days-left"><span class="pulse"></span> <span id="days-text"></span></div>
       <p class="fine-print">One per member · Non-transferable</p>
     </div>
-    <div class="divider"></div>
+
     <div class="staff-section">
-      <div class="staff-label">⬇ Staff Only ⬇</div>
-      <button class="redeem-btn" id="redeem-btn" onclick="showConfirm()">Mark as Redeemed</button>
+      <div class="staff-header">
+        <span class="staff-tag">Staff Only</span>
+      </div>
+      <p class="staff-hint">Tap below to mark this voucher as redeemed.</p>
+      <button class="redeem-btn" id="redeem-btn" onclick="showConfirm()">✓ Redeem This Coffee</button>
     </div>
   </div>
 
-  <!-- Used state -->
+  <!-- Used -->
   <div id="state-used" class="hidden">
-    <div class="customer" style="padding-bottom:36px;">
-      <div class="state-icon state-used">🎫</div>
+    <div class="customer" style="padding-bottom:40px;">
+      <div class="state-icon" style="background:#fff7ed;">🎫</div>
       <div class="stamp">REDEEMED</div>
       <div class="eyebrow used-label">Already Claimed</div>
       <div class="headline">This Voucher<br>Has Been Used</div>
-      <p class="subtext">This birthday coffee has already been redeemed. See you next year!</p>
+      <p class="subtext">This birthday coffee has already been redeemed. See you next year! 🎂</p>
     </div>
   </div>
 
-  <!-- Expired state -->
+  <!-- Expired -->
   <div id="state-expired" class="hidden">
-    <div class="customer" style="padding-bottom:36px;">
-      <div class="state-icon state-expired">⏰</div>
+    <div class="customer" style="padding-bottom:40px;">
+      <div class="state-icon" style="background:#f9fafb;">⏰</div>
       <div class="eyebrow expired-label">Offer Expired</div>
       <div class="headline">This Offer<br>Has Expired</div>
-      <p class="subtext">Your birthday offer has passed. We hope you had a great birthday!</p>
+      <p class="subtext">Your birthday offer has passed. Hope you had an amazing birthday!</p>
     </div>
   </div>
 
-  <!-- Too early state -->
+  <!-- Too early -->
   <div id="state-early" class="hidden">
-    <div class="customer" style="padding-bottom:36px;">
-      <div class="state-icon state-early">📅</div>
+    <div class="customer" style="padding-bottom:40px;">
+      <div class="state-icon" style="background:#eff6ff;">📅</div>
       <div class="eyebrow early-label">Not Yet Active</div>
       <div class="headline">Almost Time!</div>
       <p class="subtext">Your birthday offer isn't active yet — check back closer to your birthday.</p>
     </div>
   </div>
 
-  <!-- Error state -->
+  <!-- Error -->
   <div id="state-error" class="hidden">
-    <div class="customer" style="padding-bottom:36px;">
-      <div class="state-icon state-error">!</div>
+    <div class="customer" style="padding-bottom:40px;">
+      <div class="state-icon" style="background:#fef2f2;">❗</div>
       <div class="eyebrow error-label">Something Went Wrong</div>
       <div class="headline">We Hit a Snag</div>
       <p class="subtext">We couldn't find your birthday offer. Please ask at reception and we'll sort it out.</p>
-      <p style="font-size:13px;color:#9ca3af;margin-top:16px;">📞 <a href="tel:094219700" style="color:#f97316;">09 421 9700</a> · <a href="mailto:info@northernarena.co.nz" style="color:#f97316;">info@northernarena.co.nz</a></p>
+      <p style="font-size:13px;color:#9ca3af;margin-top:12px;">📞 <a href="tel:094219700" style="color:#0f4c75;">09 421 9700</a> · <a href="mailto:info@northernarena.co.nz" style="color:#0f4c75;">info@northernarena.co.nz</a></p>
     </div>
   </div>
+
 </div>
 
 <div class="footer">
@@ -351,8 +396,9 @@
 <!-- Confirm overlay -->
 <div class="confirm-overlay hidden" id="confirm-overlay">
   <div class="confirm-box">
+    <div class="confirm-icon">☕</div>
     <h3>Confirm Redemption</h3>
-    <p>Mark this coffee as redeemed for <strong id="confirm-name"></strong>?<br>This cannot be undone.</p>
+    <p>Mark this free coffee as redeemed for <strong id="confirm-name"></strong>?<br>This cannot be undone.</p>
     <div class="confirm-actions">
       <button class="btn-cancel" onclick="hideConfirm()">Cancel</button>
       <button class="btn-confirm" id="confirm-btn" onclick="doRedeem()">Confirm</button>
@@ -377,6 +423,14 @@ function showState(id) {
   document.getElementById(id).classList.remove("hidden");
 }
 
+function daysText(expiry) {
+  const now = new Date();
+  const diff = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+  if (diff <= 0) return "Expires today";
+  if (diff === 1) return "1 day left to redeem";
+  return diff + " days left to redeem";
+}
+
 async function init() {
   if (!memberId) { showState("state-error"); return; }
 
@@ -397,7 +451,6 @@ async function init() {
 
     if (row.redeemed) { showState("state-used"); return; }
 
-    // Check expiry — 10 days from created_at
     const created = new Date(row.created_at);
     const expiry = new Date(created);
     expiry.setDate(expiry.getDate() + 10);
@@ -405,10 +458,9 @@ async function init() {
 
     if (now > expiry) { showState("state-expired"); return; }
 
-    // Valid
     document.getElementById("first-name").textContent = memberName;
     document.getElementById("confirm-name").textContent = memberName;
-    document.getElementById("expiry-date").textContent = expiry.toLocaleDateString("en-NZ", { day: "numeric", month: "long", year: "numeric" });
+    document.getElementById("days-text").textContent = daysText(expiry);
     showState("state-valid");
 
   } catch(e) {
@@ -432,10 +484,7 @@ async function doRedeem() {
   try {
     const res = await fetch(`${SUPABASE_URL}?id=eq.${rowId}`, {
       method: "PATCH",
-      headers: {
-        "apikey": SUPABASE_KEY,
-        "Content-Type": "application/json"
-      },
+      headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({ redeemed: true, redeemed_at: new Date().toISOString() })
     });
 
